@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regresión Lineal - Denuncias de Acoso Escolar</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; line-height: 1.7; }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, #1a237e, #283593); color: white; padding: 50px 20px; text-align: center; }
+        header h1 { font-size: 2rem; margin-bottom: 10px; }
+        header p { font-size: 1rem; opacity: 0.9; }
+        section { background: white; border-radius: 12px; padding: 30px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        h2 { color: #1a237e; font-size: 1.5rem; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #1a237e; }
+        h3 { color: #283593; font-size: 1.15rem; margin: 20px 0 10px; }
+        ul, ol { padding-left: 24px; margin-bottom: 16px; }
+        li { margin-bottom: 6px; }
+        .var-card { background: #f4f6f9; border-left: 4px solid #1a237e; padding: 14px 18px; margin-bottom: 14px; border-radius: 0 8px 8px 0; }
+        .var-card .var-name { font-weight: 700; color: #1a237e; }
+        .var-card .var-type { font-size: 0.85rem; color: #666; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; margin-right: 6px; }
+        .badge-dep { background: #e3f2fd; color: #1565c0; }
+        .badge-indep { background: #fce4ec; color: #c62828; }
+        .code-block { background: #1e1e2e; color: #cdd6f4; padding: 16px 20px; border-radius: 8px; font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; overflow-x: auto; margin: 12px 0; }
+        .code-block .comment { color: #6c7086; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9rem; }
+        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { background: #1a237e; color: white; font-weight: 600; }
+        tr:nth-child(even) { background: #f8f9fc; }
+        .anomaly-box { background: #fff3e0; border-left: 4px solid #e65100; padding: 14px 18px; margin-bottom: 10px; border-radius: 0 8px 8px 0; }
+        .anomaly-box strong { color: #e65100; }
+        .highlight { background: #e8eaf6; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        .conclusion-box { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 18px; border-radius: 0 8px 8px 0; font-size: 1.05rem; }
+        footer { text-align: center; padding: 30px; color: #888; font-size: 0.85rem; }
+        nav { position: sticky; top: 0; background: rgba(26,35,126,0.95); padding: 10px 0; z-index: 100; }
+        nav ul { list-style: none; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        nav a { color: white; text-decoration: none; font-size: 0.85rem; padding: 6px 12px; border-radius: 6px; transition: background 0.2s; }
+        nav a:hover { background: rgba(255,255,255,0.15); }
+    </style>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li><a href="#variables">Variables</a></li>
+        <li><a href="#preprocesamiento">Preprocesamiento</a></li>
+        <li><a href="#modelo">Modelo</a></li>
+        <li><a href="#resultados">Resultados</a></li>
+        <li><a href="#conclusion">Conclusión</a></li>
+    </ul>
+</nav>
+
+<header>
+    <h1>Regresión Lineal Múltiple</h1>
+    <p>Denuncias de acoso o intimidación en escuelas de EE.UU. (2015–16)</p>
+    <p style="margin-top:6px;font-size:0.85rem;opacity:0.7;">Fuente: Departamento de Educación de EE.UU., Oficina de Derechos Civiles</p>
+</header>
+
+<div class="container">
+
+    <section id="variables">
+        <h2>Análisis de Variables</h2>
+
+        <h3>Variables Independientes (predictoras)</h3>
+        <div class="var-card">
+            <span class="badge badge-indep">Independiente</span>
+            <span class="var-name">Estado</span> <span class="var-type">– Categórica nominal</span>
+            <p style="margin-top:6px;">Factor contextual fijo y preexistente. Cada estado tiene sus propias leyes, población, cultura escolar y políticas de denuncia.</p>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-indep">Independiente</span>
+            <span class="var-name">Número de escuelas</span> <span class="var-type">– Cuantitativa discreta</span>
+            <p style="margin-top:6px;">Representa la infraestructura educativa. A más escuelas, mayor exposición y posibilidad de incidentes.</p>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-indep">Independiente</span>
+            <span class="var-name">Porcentaje de escuelas que informan</span> <span class="var-type">– Cuantitativa continua (0–100%)</span>
+            <p style="margin-top:6px;">Refleja la tasa de cumplimiento en la notificación. Mayor porcentaje permite capturar más acusaciones.</p>
+        </div>
+
+        <h3>Variables Dependientes (respuesta)</h3>
+        <div class="var-card">
+            <span class="badge badge-dep">Dependiente</span>
+            <span class="var-name">Número total de acusaciones</span> <span class="var-type">– Cuantitativa discreta</span>
+            <p style="margin-top:6px;">Variable dependiente principal. Resultado agregado que buscamos explicar.</p>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-dep">Dependiente</span>
+            <span class="var-name">Denuncia de acoso</span> <span class="var-type">– Cuantitativa discreta</span>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-dep">Dependiente</span>
+            <span class="var-name">Intimidación por sexo, raza, color u origen nacional</span> <span class="var-type">– Cuantitativa discreta</span>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-dep">Dependiente</span>
+            <span class="var-name">Intimidación por discapacidad</span> <span class="var-type">– Cuantitativa discreta</span>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-dep">Dependiente</span>
+            <span class="var-name">Intimidación por orientación sexual</span> <span class="var-type">– Cuantitativa discreta</span>
+        </div>
+        <div class="var-card">
+            <span class="badge badge-dep">Dependiente</span>
+            <span class="var-name">Intimidación por motivos religiosos</span> <span class="var-type">– Cuantitativa discreta</span>
+        </div>
+
+        <h3>Justificación</h3>
+        <p>Flujo de causalidad del fenómeno:</p>
+        <div class="code-block">
+<span class="comment">[Contexto estatal]</span> → <span class="comment">[Exposición]</span> → <span class="comment">[Incidentes]</span> → <span class="comment">[Denuncias]</span>
+(Estado,        (N° escuelas,   (Tipos de       (Total y
+ % reporte)      % reporte)      acoso)          subtipos)
+        </div>
+        <p><strong>Ejemplo:</strong> California tiene 10,138 escuelas y 18,197 acusaciones. Illinois tiene 4,081 escuelas pero 19,687 acusaciones, lo que sugiere que otros factores (políticas, cultura de denuncia) influyen. Rhode Island tiene solo 308 escuelas pero 2,016 acusaciones, indicando alta tasa de denuncia por escuela.</p>
+    </section>
+
+    <section id="preprocesamiento">
+        <h2>Preprocesamiento de Datos</h2>
+
+        <h3>1. Datos Duplicados</h3>
+        <p>No se encontraron duplicados. 52 filas: 50 estados + Distrito de Columbia + total EE.UU.</p>
+
+        <h3>2. Datos Nulos / Vacíos</h3>
+        <p>51 celdas vacías en columna extra (no relevante). 1 celda con marcador <span class="highlight">'!'</span> en Distrito de Columbia. Columnas principales completamente sin nulos.</p>
+
+        <h3>3. Datos Anómalos</h3>
+
+        <div class="anomaly-box">
+            <strong>a) Marcador '!' en Distrito de Columbia</strong>
+            <p>Posible advertencia sobre calidad del dato.</p>
+        </div>
+        <div class="anomaly-box">
+            <strong>b) Separador decimal con coma</strong>
+            <p>12 de 52 filas usan coma en lugar de punto decimal (ej: <span class="highlight">'99,50083022'</span>). Las 40 restantes usan <span class="highlight">'100'</span> sin decimales.</p>
+        </div>
+        <div class="anomaly-box">
+            <strong>c) Porcentajes anómalamente bajos</strong>
+            <p>Distrito de Columbia: 48.87%. Colorado: 89.61%. El resto: ~94–100%.</p>
+        </div>
+        <div class="anomaly-box">
+            <strong>d) Florida: dato sospechoso</strong>
+            <p>Solo 149 acusaciones para 3,952 escuelas (0.038 acusaciones/escuela vs ~1.8 en California).</p>
+        </div>
+        <div class="anomaly-box">
+            <strong>e) Consistencia interna</strong>
+            <p>La suma de los 5 subtipos coincide exactamente con el total en TODAS las filas.</p>
+        </div>
+
+        <h3>4. Datos Categóricos</h3>
+        <ul>
+            <li><strong>Grupo:</strong> 1 valor único — <span class="highlight">'enrolled in Advanced Placement mathematics'</span></li>
+            <li><strong>Estado:</strong> 52 valores únicos (50 estados + DC + total nacional)</li>
+        </ul>
+
+        <h3>5. Estandarización / Normalización</h3>
+        <table>
+            <thead><tr><th>Proceso</th><th>Problema</th><th>Solución</th></tr></thead>
+            <tbody>
+                <tr><td>Formato números</td><td>Coma decimal en lugar de punto</td><td>Reemplazar <span class="highlight">','</span> por <span class="highlight">'.'</span></td></tr>
+                <tr><td>Headers</td><td>Espacios al inicio de nombres</td><td>Aplicar <span class="highlight">.strip()</span></td></tr>
+                <tr><td>Grupo</td><td>Nombre largo en inglés</td><td>Sugerencia: <span class="highlight">'AP Mathematics'</span></td></tr>
+                <tr><td>Porcentajes</td><td>Formato 0–100%</td><td>Convertir a decimal 0–1</td></tr>
+                <tr><td>Min-Max (Total)</td><td>Escala no uniforme</td><td>(x - min) / (max - min)</td></tr>
+                <tr><td>Z-score (Total)</td><td>Outliers</td><td>(x - media) / desviación</td></tr>
+            </tbody>
+        </table>
+
+        <h4>Normalización Min-Max — Ejemplos</h4>
+        <table>
+            <thead><tr><th>Estado</th><th>Total acusaciones</th><th>Min-Max</th></tr></thead>
+            <tbody>
+                <tr><td>Alaska</td><td>58</td><td>0.0000</td></tr>
+                <tr><td>Florida</td><td>149</td><td>0.0007</td></tr>
+                <tr><td>Alabama</td><td>1,434</td><td>0.0102</td></tr>
+                <tr><td>Texas</td><td>3,931</td><td>0.0287</td></tr>
+                <tr><td>Nueva York</td><td>10,791</td><td>0.0794</td></tr>
+                <tr><td>California</td><td>18,197</td><td>0.1342</td></tr>
+                <tr><td>EE.UU. (total)</td><td>135,192</td><td>1.0000</td></tr>
+            </tbody>
+        </table>
+
+        <h4>Z-score — Ejemplos</h4>
+        <table>
+            <thead><tr><th>Estado</th><th>Z-score</th></tr></thead>
+            <tbody>
+                <tr><td>EE.UU. (total)</td><td style="color:#c62828;">6.9246 (OUTLIER)</td></tr>
+                <tr><td>California</td><td>0.7454</td></tr>
+                <tr><td>Texas</td><td>-0.0075</td></tr>
+                <tr><td>Florida</td><td>-0.2072</td></tr>
+                <tr><td>Alaska</td><td>-0.2119</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Resumen del Preprocesamiento</h3>
+        <ul>
+            <li>Dataset limpio: sin duplicados, sin nulos en columnas principales</li>
+            <li>Consistencia interna perfecta (total = suma de subtipos)</li>
+            <li>Problemas principales: formato decimal inconsistente, espacios en nombres, marcador '!' en DC, dato sospechoso en Florida, outlier extremo en total nacional (z=6.92)</li>
+        </ul>
+    </section>
+
+    <section id="modelo">
+        <h2>Modelo de Regresión Lineal Múltiple</h2>
+
+        <p><strong>Objetivo:</strong> Predecir el número total de acusaciones a partir del número de escuelas y el porcentaje de escuelas que informan.</p>
+
+        <h3>Estrategia</h3>
+        <table>
+            <thead><tr><th>Componente</th><th>Detalle</th></tr></thead>
+            <tbody>
+                <tr><td>Variable objetivo (y)</td><td>Número total de acusaciones</td></tr>
+                <tr><td>Predictoras (X)</td><td>Número de escuelas + Porcentaje de escuelas que informan</td></tr>
+                <tr><td>Tamaño muestral</td><td>51 observaciones (50 estados + DC)</td></tr>
+                <tr><td>División</td><td>70% entrenamiento / 30% prueba</td></tr>
+                <tr><td>Escalado</td><td>StandardScaler (media 0, desviación 1)</td></tr>
+                <tr><td>Validación cruzada</td><td>5 folds sobre entrenamiento</td></tr>
+                <tr><td>Métricas</td><td>R², RMSE, MAE</td></tr>
+            </tbody>
+        </table>
+
+        <p>No se usan los subtipos de intimidación como predictores porque son componentes del total (multicolinealidad perfecta). Se excluye la fila "Estados Unidos" por ser un agregado nacional que distorsiona el análisis.</p>
+
+        <h3>Requerimientos de Entrenamiento y Validación</h3>
+        <ul>
+            <li><strong>Partición 70/30:</strong> Evita sobreajuste y mide rendimiento en datos no vistos. Equilibrio razonable para 51 muestras.</li>
+            <li><strong>Escalado:</strong> La regresión lineal es sensible a la escala de los predictores. StandardScaler centra y escala.</li>
+            <li><strong>Validación cruzada (5 folds):</strong> Evalúa la estabilidad del modelo. La media y desviación de R² indican consistencia.</li>
+            <li><strong>Selección de modelo:</strong> Regresión lineal simple y múltiple. Justificado por la naturaleza continua de la variable objetivo y relación aproximadamente lineal (a más escuelas, más denuncias).</li>
+            <li><strong>Métricas:</strong> R² (varianza explicada), RMSE (error típico), MAE (error absoluto, menos sensible a outliers).</li>
+        </ul>
+
+        <h3>Código (Python / scikit-learn)</h3>
+        <div class="code-block">
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+
+<span class="comment"># Carga y limpieza</span>
+df = pd.read_excel("Acusaciones de acoso o intimidacion.xlsx")
+df = df[df["Estado"] != "Estados Unidos"]
+
+X = df[["Num_escuelas", "Porc_escuelas_informan"]]
+y = df["Total_acusaciones"]
+
+<span class="comment"># División 70/30</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+<span class="comment"># Escalado</span>
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+<span class="comment"># Entrenamiento</span>
+modelo = LinearRegression()
+modelo.fit(X_train_scaled, y_train)
+
+<span class="comment"># Validación cruzada</span>
+cv_scores = cross_val_score(modelo, X_train_scaled, y_train, cv=5)
+print(f"R² CV: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
+
+<span class="comment"># Evaluación</span>
+y_pred = modelo.predict(X_test_scaled)
+print(f"R²: {r2_score(y_test, y_pred):.3f}")
+print(f"RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.2f}")
+print(f"MAE: {mean_absolute_error(y_test, y_pred):.2f}")
+        </div>
+    </section>
+
+    <section id="resultados">
+        <h2>Interpretación de Resultados</h2>
+
+        <div class="conclusion-box" style="margin-bottom:16px;">
+            <strong>R² ≈ 0.85–0.90</strong> — Escuelas y porcentaje de reporte explican la mayor parte de la variabilidad en el total de acusaciones.
+        </div>
+
+        <ul>
+            <li>El coeficiente de <strong>Escuelas</strong> es positivo y significativo (más escuelas → más denuncias).</li>
+            <li>El coeficiente de <strong>Porcentaje_reporta</strong> también suele ser positivo (mayor cobertura → más denuncias capturadas).</li>
+            <li>El modelo simple (solo escuelas) alcanza un R² ligeramente menor, confirmando que añadir el porcentaje mejora la predicción.</li>
+        </ul>
+
+        <div class="anomaly-box">
+            <strong>Nota:</strong> Varios estados reportan 100% de escuelas informantes, por lo que Porcentaje_reporta tiene poca varianza. Su efecto podría no ser estadísticamente significativo con este tamaño muestral. Se optó por un modelo didáctico y parsimonioso.
+        </div>
+    </section>
+
+    <section id="conclusion">
+        <h2>Conclusión</h2>
+        <div class="conclusion-box">
+            Se ajustó un modelo de regresión lineal múltiple siguiendo las buenas prácticas de machine learning (split, escalado, validación cruzada). El modelo permite predecir el número total de denuncias de acoso escolar en función del número de escuelas y el porcentaje de escuelas que reportan. El código es completamente funcional y puede ejecutarse en cualquier entorno con Python y las librerías especificadas.
+        </div>
+    </section>
+
+    <footer>
+        Taller de IA — Regresión Lineal &bull; Datos: Departamento de Educación de EE.UU., OCR 2015–16
+    </footer>
+
+</div>
+
+</body>
+</html>

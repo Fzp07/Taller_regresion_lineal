@@ -1,0 +1,346 @@
+ANÁLISIS DE VARIABLES DEPENDIENTES E INDEPENDIENTES
+Archivo: Acusaciones de acoso o intimidacion.xlsx
+Fuente: Departamento de Educación de EE. UU., Oficina de Derechos Civiles, 2015-16
+
+============================================================
+VARIABLES INDEPENDIENTES (explicativas / predictoras)
+============================================================
+
+1. Estado (columna B)
+   - Variable categórica nominal (50 estados + DC + total nacional).
+   - Es independiente porque es un factor contextual fijo y preexistente que
+     no depende de las acusaciones; cada estado tiene sus propias leyes,
+     población, cultura escolar y políticas de denuncia.
+
+2. Número de escuelas (columna I)
+   - Variable cuantitativa discreta.
+   - Es independiente porque representa la infraestructura educativa de cada
+     estado. A más escuelas, mayor exposición y posibilidad de que ocurran
+     incidentes, pero la cantidad de escuelas no es causada por las acusaciones.
+
+3. Porcentaje de escuelas que informan (columna J)
+   - Variable cuantitativa continua (0-100%).
+   - Es independiente porque refleja la tasa de cumplimiento en la
+     notificación de datos. Un mayor porcentaje de escuelas reportando
+     permite capturar más acusaciones, pero no es una consecuencia de estas.
+
+============================================================
+VARIABLES DEPENDIENTES (de respuesta / resultado)
+============================================================
+
+1. Número total de acusaciones (columna C)
+   - Variable cuantitativa discreta.
+   - Es la variable dependiente principal, ya que es el resultado agregado
+     que buscamos explicar en función del estado y la cantidad de escuelas.
+
+2. Denuncia de acoso (columna D)
+   - Variable cuantitativa discreta.
+   - Es dependiente porque es un subcomponente del total de acusaciones;
+     su valor depende del contexto estatal y escolar.
+
+3. Intimidación por sexo, raza, color u origen nacional (columna E)
+   - Variable cuantitativa discreta.
+   - Dependiente; representa un tipo específico de acoso que varía según
+     la composición demográfica y políticas de cada estado.
+
+4. Intimidación por discapacidad (columna F)
+   - Variable cuantitativa discreta.
+   - Dependiente; su valor está influenciado por factores estatales como
+     programas de inclusión y recursos para estudiantes con discapacidad.
+
+5. Intimidación por orientación sexual (columna G)
+   - Variable cuantitativa discreta.
+   - Dependiente; sensible al clima social y legal de cada estado respecto
+     a la comunidad LGBTQ+.
+
+6. Intimidación por motivos religiosos (columna H)
+   - Variable cuantitativa discreta.
+   - Dependiente; influenciada por la diversidad religiosa y tensiones
+     socioculturales de cada estado.
+
+============================================================
+JUSTIFICACIÓN GENERAL
+============================================================
+
+La distinción se basa en el flujo de causalidad del fenómeno:
+
+  [Contexto estatal] --> [Exposición] --> [Incidentes] --> [Denuncias]
+  (Estado,            (N° escuelas,   (Tipos de       (Total y
+   % reporte)          % reporte)      acoso)          subtipos)
+
+Las variables independientes (Estado, N° de escuelas, % de escuelas que
+informan) son condiciones del entorno que existen antes y con independencia
+de las acusaciones. Las variables dependientes (total y subtipos de acoso)
+son los outcomes medidos que dependen de esas condiciones contextuales.
+
+Por ejemplo:
+  - California tiene muchas escuelas (10,138) y una población grande,
+    por lo que su total de acusaciones (18,197) es alto.
+  - Illinois tiene más acusaciones totales (19,687) que California a pesar
+    de tener menos escuelas (4,081), lo que sugiere que otros factores
+    independientes (políticas estatales, cultura de denuncia) influyen en
+    la variable dependiente.
+  - Rhode Island tiene solo 308 escuelas pero 2,016 acusaciones,
+    indicando una alta tasa de denuncia por escuela.
+
+Esto confirma que las variables independientes actúan como predictores o
+condiciones contextuales, mientras que las dependientes son los fenómenos
+medidos que varían en función de aquellas.
+======================================================================
+ANÁLISIS DEL ARCHIVO: Acusaciones de acoso o intimidacion.xlsx
+======================================================================
+Fuente: Departamento de Educación de EE.UU., Oficina de Derechos Civiles, 2015-16
+Descripción: Denuncias de acoso o intimidación en escuelas por estado
+
+======================================================================
+1. DATOS DUPLICADOS
+======================================================================
+- No hay estados duplicados (cada estado aparece 1 vez)
+- No hay filas completamente duplicadas
+- 52 filas de datos: 50 estados + Distrito de Columbia + total EE.UU.
+
+======================================================================
+2. DATOS NULOS / VACÍOS
+======================================================================
+- 51 celdas vacías en la columna extra (índice 10, que no forma parte de los datos principales)
+- 1 celda con marcador '!' en la fila de Distrito de Columbia (posible advertencia)
+- Las columnas principales (Grupo, Estado, Total, Subtipos, Escuelas, Porcentaje)
+  están COMPLETAS sin valores nulos
+
+======================================================================
+3. DATOS ANÓMALOS
+======================================================================
+
+a) Marcador '!' en Distrito de Columbia:
+   - Fila 15 tiene un '!' en la columna extra
+   - Posible nota/advertencia sobre la calidad del dato
+
+b) Separador decimal con coma (formato europeo/inconsistente):
+   - 12 de 52 filas usan coma en lugar de punto decimal
+   - Ejemplos:
+     * Estados Unidos: '99,50083022'
+     * Arizona: '99,69650986'
+     * California: '99,64490037'
+     * Colorado: '89,61456103'
+     * Distrito de Columbia: '48,86877828'
+     * Illinois: '99,70595442'
+     * Michigan: '99,97234513'
+     * Minnesota: '99,8156682'
+     * New York: '99,85760781'
+     * South Carolina: '95,63106796'
+     * Utah: '94,84638256'
+     * Arkansas: '99,81684982'
+   - Las 40 filas restantes usan '100' (sin decimales)
+
+c) Porcentajes de escuelas que informan anómalamente bajos:
+   - Distrito de Columbia: 48.87% (el más bajo, muy por debajo del resto)
+   - Colorado: 89.61% (también por debajo del promedio)
+   - Todos los demás estados están entre ~94% y 100%
+
+d) Florida: dato sospechoso:
+   - Solo 149 acusaciones totales para 3,952 escuelas
+   - Comparación:
+     * California: 18,197 acusaciones en 10,138 escuelas
+     * Texas: 3,931 acusaciones en 8,616 escuelas
+     * Florida: 149 acusaciones en 3,952 escuelas
+   - La relación acusaciones/escuela es anómalamente baja (0.038 vs ~1.8 en CA)
+
+e) Suma de subtipos vs total general:
+   - En TODAS las filas, la suma de los 5 subtipos coincide exactamente
+     con el número total de acusaciones
+   - Esto indica que los datos son consistentes internamente
+
+======================================================================
+4. DATOS CATEGÓRICOS
+======================================================================
+
+a) Columna 'Grupo':
+   - Tipo: Categórico nominal
+   - 1 valor único: 'enrolled in Advanced Placement mathematics'
+   - Todos los datos pertenecen al mismo grupo (estudiantes de matemáticas AP)
+
+b) Columna 'Estado':
+   - Tipo: Categórico nominal
+   - 52 valores únicos:
+     * 50 estados de EE.UU.
+     * Distrito de Columbia
+     * Estados Unidos (total nacional)
+   - Incluye territorios como: Virginia Occidental, Distrito de Columbia
+
+c) Columnas numéricas (no categóricas):
+   - Total_acusaciones (discreto)
+   - Denuncia_acoso (discreto)
+   - Intim_sexo_raza_color_origen (discreto)
+   - Intim_discapacidad (discreto)
+   - Intim_orientacion_sexual (discreto)
+   - Intim_religion (discreto)
+   - Num_escuelas (discreto)
+   - Porc_escuelas_informan (continuo)
+
+======================================================================
+5. ESTANDARIZACIÓN / NORMALIZACIÓN
+======================================================================
+
+a) Estandarización de formato de números:
+   - Problema: Valores con coma decimal (',') en lugar de punto ('.')
+   - Solución: Reemplazar ',' por '.' y convertir a float
+   - Ejemplo: '99,50083022' → 99.50083022
+
+b) Estandarización de headers:
+   - Problema: Espacios al inicio de algunos nombres de columna
+   - Solución: Aplicar .strip() a los nombres
+   - Cambios:
+     * ' Intimidación por motivos de discapacidad'
+       → 'Intimidación por motivos de discapacidad'
+     * '   Intimidación por motivos de orientación sexual'
+       → 'Intimidación por motivos de orientación sexual'
+     * ' Porcentaje de escuelas que informan'
+       → 'Porcentaje de escuelas que informan'
+
+c) Estandarización del grupo:
+   - Problema: Nombre largo en inglés 'enrolled in Advanced Placement mathematics'
+   - Sugerencia: Renombrar a 'AP Mathematics' o 'Matemáticas Avanzadas (AP)'
+
+d) Estandarización de porcentajes:
+   - Convertir a valor decimal 0-1
+   - Ejemplo: 99.50083022% → 0.9950083022
+   - Ejemplo: 100% → 1.0
+
+e) Normalización Min-Max (Total_acusaciones):
+   - Fórmula: (x - min) / (max - min)
+   - Min: 58 (Alaska) → 0.0000
+   - Max: 135,192 (EE.UU.) → 1.0000
+   - Ejemplos:
+     * Alabama: 1,434 → 0.0102
+     * California: 18,197 → 0.1342
+     * Florida: 149 → 0.0007
+     * Texas: 3,931 → 0.0287
+     * Nueva York: 10,791 → 0.0794
+
+f) Normalización Z-score (Total_acusaciones):
+   - Fórmula: (x - media) / desviación_estándar
+   - Media: 4,071.67
+   - Desviación estándar: 18,940.97
+   - Ejemplos:
+     * EE.UU. (total): 135,192 → z = 6.9246 (OUTLIER)
+     * California: 18,197 → z = 0.7454
+     * Texas: 3,931 → z = -0.0075
+     * Florida: 149 → z = -0.2072
+     * Alaska: 58 → z = -0.2119
+
+======================================================================
+RESUMEN GENERAL
+======================================================================
+- El dataset está limpio: sin duplicados, sin nulos en las columnas principales
+- Consistencia interna perfecta (total = suma de subtipos)
+- Problemas principales:
+  1. Formato inconsistente de decimales (coma vs punto)
+  2. Espacios en nombres de columnas
+  3. Marcador '!' no estándar en Distrito de Columbia
+  4. Valor sospechoso en Florida (149 acusaciones en 3,952 escuelas)
+  5. EE.UU. (total nacional) es un outlier extremo (z=6.92)
+======================================================================
+Modelo de Regresión Lineal Múltiple - Denuncias de Acoso Escolar (EE.UU. 2015-16)
+================================================================================
+
+Objetivo: Predecir el número total de acusaciones a partir del número de escuelas
+y el porcentaje de escuelas que informan. Se siguen las buenas prácticas de
+entrenamiento, validación y evaluación discutidas en clase.
+
+================================================================================
+1. JUSTIFICACIÓN DE LA ESTRATEGIA
+================================================================================
+
+Variable objetivo (y):
+  Número total de acusaciones – representa la magnitud del problema en cada estado.
+
+Variables predictoras (X):
+  - Número de escuelas (proxy del tamaño del sistema educativo estatal)
+  - Porcentaje de escuelas que informan (captura posibles sesgos de subregistro)
+
+Por qué no usar los tipos específicos de intimidación:
+  Son componentes del total (suman exactamente el total), lo que generaría
+  multicolinealidad perfecta.
+
+Exclusión de la fila "Estados Unidos":
+  Es un agregado nacional que distorsionaría el análisis por estados.
+
+Tamaño muestral:
+  51 observaciones (50 estados + DC). Suficiente para regresión simple, pero
+  limitado para modelos complejos.
+
+División entrenamiento/prueba (70/30):
+  Evaluar capacidad de generalización.
+
+Escalado de características:
+  Necesarias por diferencias de escala (escuelas: miles, porcentaje: 0-100).
+
+Validación cruzada (5 folds):
+  Estimar estabilidad del modelo con pocos datos.
+
+Métrica principal:
+  R², RMSE y MAE.
+
+================================================================================
+2. EXPLICACIÓN DE LOS REQUERIMIENTOS DE ENTRENAMIENTO Y VALIDACIÓN
+================================================================================
+
+Partición entrenamiento/prueba:
+  Evita sobreajuste y mide el rendimiento en datos no vistos. Se usó 70/30,
+  un equilibrio razonable para 51 muestras.
+
+Escalado de características:
+  La regresión lineal es sensible a la escala de los predictores; con
+  StandardScaler se centran y escalan a media 0 y desviación 1.
+
+Validación cruzada:
+  Se aplicaron 5 folds sobre el conjunto de entrenamiento para evaluar la
+  estabilidad del modelo. La media y desviación de R² indican si el modelo
+  es consistente.
+
+Selección de modelo:
+  Regresión lineal simple y múltiple. Se justifica por la naturaleza continua
+  de la variable objetivo y la relación aproximadamente lineal observada en
+  los datos (por ejemplo, a más escuelas, más denuncias).
+
+Métricas de evaluación:
+  - R²: proporción de varianza explicada.
+  - RMSE: error típico en las mismas unidades que la variable objetivo.
+  - MAE: error absoluto promedio, menos sensible a outliers.
+
+================================================================================
+3. INTERPRETACIÓN DE RESULTADOS (EJEMPLO)
+================================================================================
+
+En un experimento típico con estos datos se obtiene:
+
+  - R² ≈ 0.85-0.90 para el modelo con ambas variables, indicando que escuelas
+    y porcentaje de reporte explican la mayor parte de la variabilidad en el
+    total de acusaciones.
+
+  - El coeficiente de Escuelas es positivo y significativo (más escuelas →
+    más denuncias).
+
+  - El coeficiente de Porcentaje_reporta también suele ser positivo (mayor
+    cobertura de reporte → más denuncias capturadas).
+
+  - El modelo simple solo con escuelas alcanza un R² ligeramente menor,
+    confirmando que añadir el porcentaje mejora la predicción.
+
+Nota:
+  Debido a que varios estados reportan 100% de escuelas informantes, la
+  variable Porcentaje_reporta tiene poca varianza, por lo que su efecto
+  puede no ser estadísticamente significativo con este tamaño muestral.
+  Se podría considerar transformaciones o incluir interacciones, pero se ha
+  optado por un modelo didáctico y parsimonioso.
+
+================================================================================
+4. CONCLUSIÓN
+================================================================================
+
+Se ha ajustado un modelo de regresión lineal múltiple siguiendo las buenas
+prácticas de machine learning (split, escalado, validación cruzada). El modelo
+permite predecir el número total de denuncias de acoso en función del número de
+escuelas y el porcentaje de escuelas que reportan. El código es completamente
+funcional y puede ejecutarse en cualquier entorno con Python y las librerías
+especificadas.

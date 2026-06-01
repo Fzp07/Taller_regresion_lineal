@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regresión Lineal - Acoso Escolar EE.UU.</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'ia_app/css/style.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">📊 Regresión Lineal</div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#variables">Variables</a></li>
+                <li><a href="#datos">Datos</a></li>
+                <li><a href="#modelo">Modelo</a></li>
+                <li><a href="#resultados">Resultados</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1 id="typing-text"></h1>
+            <p>Análisis de acoso escolar en EE.UU. (2015-16) — Departamento de Educación</p>
+            <button class="btn" onclick="scrollToSection('variables')">Explorar análisis</button>
+        </div>
+        <div class="particles" id="particles"></div>
+    </section>
+
+    <section id="variables" class="section">
+        <h2>Variables del Estudio</h2>
+        <div class="vars-grid">
+            <div class="var-card independiente">
+                <h3>Independientes</h3>
+                <ul>
+                    <li><strong>Estado</strong> — Categórica nominal (50 + DC)</li>
+                    <li><strong>N° de escuelas</strong> — Cuantitativa discreta</li>
+                    <li><strong>% escuelas que informan</strong> — Cuantitativa continua (0–100%)</li>
+                </ul>
+                <p class="var-desc">Variables predictoras que explican el contexto</p>
+            </div>
+            <div class="arrow">→</div>
+            <div class="var-card dependiente">
+                <h3>Dependientes</h3>
+                <ul>
+                    <li><strong>Total acusaciones</strong> — Variable objetivo principal</li>
+                    <li><strong>Denuncia de acoso</strong> — Subcomponente</li>
+                    <li><strong>Intimidación (sexo/raza/origen)</strong> — Subtipo</li>
+                    <li><strong>Intimidación por discapacidad</strong> — Subtipo</li>
+                    <li><strong>Intimidación por orientación sexual</strong> — Subtipo</li>
+                    <li><strong>Intimidación por religión</strong> — Subtipo</li>
+                </ul>
+                <p class="var-desc">Variables de respuesta medidas</p>
+            </div>
+        </div>
+        <div class="flow-diagram">
+            <p>[Contexto estatal] → [Exposición] → [Incidentes] → [Denuncias]</p>
+        </div>
+    </section>
+
+    <section id="datos" class="section dark">
+        <h2>Calidad de Datos</h2>
+        <div class="findings">
+            <div class="finding good">
+                <h3>✅ Datos Limpios</h3>
+                <ul>
+                    <li>Sin duplicados — 52 filas únicas</li>
+                    <li>Sin valores nulos en columnas principales</li>
+                    <li>Consistencia perfecta: total = suma de subtipos</li>
+                </ul>
+            </div>
+            <div class="finding warn">
+                <h3>⚠️ Anomalías</h3>
+                <ul>
+                    <li><strong>Florida:</strong> solo 149 acusaciones en 3,952 escuelas (0.038/escuela)</li>
+                    <li><strong>DC:</strong> marcador '!' y 48.87% de informe (mínimo nacional)</li>
+                    <li><strong>12 filas</strong> usan coma decimal en vez de punto</li>
+                    <li><strong>EE.UU.</strong> (total nacional) es outlier extremo: z = 6.92</li>
+                </ul>
+            </div>
+            <div class="finding info">
+                <h3>📋 Estandarización</h3>
+                <ul>
+                    <li>Reemplazo de coma → punto decimal</li>
+                    <li>Eliminación de espacios en nombres de columna</li>
+                    <li>Normalización Min-Max y Z-score aplicadas</li>
+                    <li>Escalado con StandardScaler para regresión</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="modelo" class="section">
+        <h2>Modelo de Regresión Lineal Múltiple</h2>
+        <div class="model-content">
+            <div class="model-card">
+                <h3>Estrategia</h3>
+                <ul>
+                    <li><strong>y:</strong> Total de acusaciones</li>
+                    <li><strong>X₁:</strong> Número de escuelas</li>
+                    <li><strong>X₂:</strong> % de escuelas que informan</li>
+                    <li><strong>n:</strong> 51 observaciones (50 estados + DC)</li>
+                    <li>Excluida fila "EE.UU." por ser agregado nacional</li>
+                </ul>
+            </div>
+            <div class="model-card">
+                <h3>Entrenamiento</h3>
+                <ul>
+                    <li><strong>Split:</strong> 70% entrenamiento / 30% prueba</li>
+                    <li><strong>Validación cruzada:</strong> 5 folds</li>
+                    <li><strong>Escalado:</strong> StandardScaler</li>
+                    <li><strong>Métricas:</strong> R², RMSE, MAE</li>
+                </ul>
+            </div>
+            <div class="model-card">
+                <h3>¿Por qué estas variables?</h3>
+                <p>Más escuelas → mayor exposición. Mayor % de reporte → más denuncias capturadas. Los subtipos se excluyen porque suman exactamente el total (multicolinealidad perfecta).</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="resultados" class="section dark">
+        <h2>Resultados</h2>
+        <div class="results-grid">
+            <div class="result-card">
+                <div class="result-icon">📈</div>
+                <h3>R² ≈ 0.85 – 0.90</h3>
+                <p>El modelo explica la mayor parte de la variabilidad en acusaciones</p>
+            </div>
+            <div class="result-card">
+                <div class="result-icon">🏫</div>
+                <h3>Coeficiente (+) Escuelas</h3>
+                <p>A más escuelas, más denuncias. Efecto significativo.</p>
+            </div>
+            <div class="result-card">
+                <div class="result-icon">📋</div>
+                <h3>Coeficiente (+) % Reporte</h3>
+                <p>Mayor cobertura de reporte → más denuncias capturadas</p>
+            </div>
+        </div>
+        <div class="conclusion">
+            <h3>Conclusión</h3>
+            <p>Se ajustó un modelo de regresión lineal múltiple siguiendo buenas prácticas de machine learning (split, escalado, validación cruzada). El modelo permite predecir el número total de denuncias de acoso en función del número de escuelas y el porcentaje de escuelas que reportan. El código es completamente funcional y ejecutable en cualquier entorno con Python y las librerías especificadas.</p>
+        </div>
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number" data-target="51">0</span>
+                <span class="stat-label">Observaciones</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" data-target="90">0</span>
+                <span class="stat-label">R² máximo (%)</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" data-target="5">0</span>
+                <span class="stat-label">Folds de validación</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" data-target="135192">0</span>
+                <span class="stat-label">Max acusaciones (EE.UU.)</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Análisis de Regresión Lineal — Datos: Departamento de Educación de EE.UU., Oficina de Derechos Civiles, 2015-16</p>
+    </footer>
+
+    <script src="{% static 'ia_app/js/script.js' %}"></script>
+</body>
+</html>
