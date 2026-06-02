@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+import matplotlib.pyplot as plt
 
 # ------------------------------------------------------------
 # 1. Carga y limpieza de datos (simulando el archivo Excel)
@@ -85,14 +86,72 @@ print("\nCoeficientes del modelo (sobre características estandarizadas):")
 print(coef_df)
 
 # ------------------------------------------------------------
-# 7. Validación cruzada (5 folds) en entrenamiento
+# 7. Diagramas de diagnóstico
+# ------------------------------------------------------------
+
+# 7.1 Reales vs Predichos
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, alpha=0.6, edgecolors='k', linewidth=0.5)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Valores Reales')
+plt.ylabel('Valores Predichos')
+plt.title('Valores Reales vs Predichos')
+plt.tight_layout()
+plt.savefig('diagrama_reales_vs_predichos.png')
+
+# 7.2 Residuales vs Predichos
+plt.figure(figsize=(8, 6))
+residuals = y_test - y_pred
+plt.scatter(y_pred, residuals, alpha=0.6, edgecolors='k', linewidth=0.5)
+plt.axhline(y=0, color='r', linestyle='--', lw=2)
+plt.xlabel('Valores Predichos')
+plt.ylabel('Residuales')
+plt.title('Residuales vs Valores Predichos')
+plt.tight_layout()
+plt.savefig('diagrama_residuales.png')
+
+# 7.3 Histograma de residuales
+plt.figure(figsize=(8, 6))
+plt.hist(residuals, bins=15, edgecolor='black', alpha=0.7)
+plt.xlabel('Residual')
+plt.ylabel('Frecuencia')
+plt.title('Distribución de Residuales')
+plt.tight_layout()
+plt.savefig('diagrama_histograma_residuales.png')
+
+# 7.4 Coeficientes del modelo
+plt.figure(figsize=(8, 6))
+variables = ['Escuelas', 'Porcentaje_reporta']
+coeficientes = [model.coef_[0], model.coef_[1]]
+plt.bar(variables, coeficientes, color=['steelblue', 'coral'], edgecolor='black')
+plt.axhline(y=0, color='gray', linestyle='--', lw=1)
+plt.ylabel('Coeficiente')
+plt.title('Coeficientes del Modelo')
+plt.tight_layout()
+plt.savefig('diagrama_coeficientes.png')
+
+# ------------------------------------------------------------
+# 8. Validación cruzada (5 folds) en entrenamiento
 # ------------------------------------------------------------
 kfold = KFold(n_splits=5, shuffle=True, random_state=42)
 cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=kfold, scoring='r2')
 print(f"\nValidación cruzada (5 folds) R²: media = {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
 
 # ------------------------------------------------------------
-# 8. (Opcional) Regresión simple solo con 'Escuelas' para comparar
+# 9. Diagrama de validación cruzada
+# ------------------------------------------------------------
+plt.figure(figsize=(8, 6))
+fold_labels = [f'Fold {i+1}' for i in range(len(cv_scores))]
+plt.bar(fold_labels, cv_scores, color='steelblue', edgecolor='black')
+plt.axhline(y=cv_scores.mean(), color='red', linestyle='--', lw=2, label=f'Media = {cv_scores.mean():.4f}')
+plt.ylabel('R²')
+plt.title('Puntuaciones R² por Fold en Validación Cruzada')
+plt.legend()
+plt.tight_layout()
+plt.savefig('diagrama_validacion_cruzada.png')
+
+# ------------------------------------------------------------
+# 10. (Opcional) Regresión simple solo con 'Escuelas' para comparar
 # ------------------------------------------------------------
 X_simple = df[['Escuelas']]
 X_train_s, X_test_s, y_train_s, y_test_s = train_test_split(X_simple, y, test_size=0.3, random_state=42)
@@ -104,3 +163,18 @@ model_simple.fit(X_train_s_scaled, y_train_s)
 y_pred_s = model_simple.predict(X_test_s_scaled)
 r2_s = r2_score(y_test_s, y_pred_s)
 print(f"\nModelo solo con 'Escuelas' - R² en test: {r2_s:.4f}")
+
+# ------------------------------------------------------------
+# 11. Diagrama comparativo de modelos
+# ------------------------------------------------------------
+plt.figure(figsize=(8, 6))
+modelos = ['Completo\n(Escuelas + %reporta)', 'Simple\n(solo Escuelas)']
+r2_valores = [r2, r2_s]
+colores = ['steelblue', 'coral']
+plt.bar(modelos, r2_valores, color=colores, edgecolor='black')
+plt.ylabel('R²')
+plt.title('Comparación de R² entre Modelos')
+plt.tight_layout()
+plt.savefig('diagrama_comparacion_modelos.png')
+
+plt.show()
