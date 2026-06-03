@@ -1,0 +1,24 @@
+name: taller-regresion-lineal
+region: nyc
+services:
+  - name: web
+    github:
+      branch: master
+      deploy_on_push: true
+      repo: Fzp07/Taller_regresion_lineal
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    source_dir: /
+    envs:
+      - key: DJANGO_SECRET_KEY
+        value: "${DJANGO_SECRET_KEY}"
+        type: SECRET
+      - key: DJANGO_DEBUG
+        value: "False"
+        type: GENERAL
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "${APP_URL}"
+        type: GENERAL
+    routes:
+      - path: /
